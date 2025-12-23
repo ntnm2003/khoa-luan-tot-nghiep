@@ -56,28 +56,70 @@ Xây dựng một hệ thống quản lý học liệu hiện đại, phân tán
 
 ## 🚀 Quick Start
 
-### 1. Cài đặt dependencies
+### Option 1: Docker Compose (Recommended) 🐳
+
+**Prerequisites**: Docker & Docker Compose installed
+
+#### Start everything with one command:
+```bash
+docker-compose up -d
+```
+
+#### Wait for services to be healthy (30-60 seconds):
+```bash
+docker-compose ps
+```
+
+#### Access the application:
+- **API Docs**: http://localhost:3000/api/docs
+- **Dashboard**: http://localhost:3000/dashboard.html
+- **Health Check**: http://localhost:3000/health
+
+#### Seed database:
+```bash
+docker-compose exec app npm run seed
+```
+
+#### View logs:
+```bash
+docker-compose logs -f app
+```
+
+#### Stop services:
+```bash
+docker-compose down
+```
+
+For more Docker commands and production setup, see [DOCKER_GUIDE.md](./DOCKER_GUIDE.md)
+
+---
+
+### Option 2: Traditional Setup (npm)
+
+**Prerequisites**: Node.js v14+ and MongoDB v4.0+
+
+#### 1. Cài đặt dependencies
 ```bash
 npm install
 ```
 
-### 2. Khởi chạy MongoDB
+#### 2. Khởi chạy MongoDB
 ```bash
-# Sử dụng Docker (khuyến nghị)
-docker run -d -p 27017:27017 --name mongodb mongo:5.0
+# Sử dụng Docker
+docker run -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=root --name mongodb mongo:5.0
 ```
 
-### 3. Tạo dữ liệu mẫu
+#### 3. Tạo dữ liệu mẫu
 ```bash
 npm run seed
 ```
 
-### 4. Chạy server
+#### 4. Chạy server
 ```bash
 npm run dev
 ```
 
-### 5. Truy cập
+#### 5. Truy cập
 - **API Docs**: http://localhost:3000/api/docs
 - **Dashboard**: http://localhost:3000/dashboard.html
 - **Health Check**: http://localhost:3000/health
@@ -91,8 +133,12 @@ khoa-luan-su-pham/
 ├── 📄 index.js                          # Entry point
 ├── 📄 package.json                      # Dependencies
 ├── 📄 .env                              # Environment config
+├── 📄 Dockerfile                        # Docker image configuration
+├── 📄 docker-compose.yml                # Docker Compose orchestration
+├── 📄 .dockerignore                     # Files to exclude from Docker build
 ├── 📚 API_DOCUMENTATION.md              # API detailed documentation
 ├── 📚 MONGODB_SCHEMA.md                 # Database schema details
+├── 📚 DOCKER_GUIDE.md                   # Docker setup and usage guide
 ├── 📚 SETUP_GUIDE.md                    # Installation guide
 │
 ├── src/
@@ -433,6 +479,56 @@ pm2 startup
 
 ---
 
+## 🐳 Docker Support
+
+This project includes complete Docker support for easy deployment and development.
+
+### Files Added:
+- `Dockerfile` - Node.js application container
+- `docker-compose.yml` - Multi-container orchestration
+- `.dockerignore` - Build optimization
+- `DOCKER_GUIDE.md` - Complete Docker documentation
+- `docker-quick-start.sh` - Interactive setup script
+- `.env.example` - Environment configuration template
+
+### Quick Commands:
+
+```bash
+# Start everything (recommended)
+docker-compose up -d
+
+# View status
+docker-compose ps
+
+# Seed database
+docker-compose exec app npm run seed
+
+# View logs
+docker-compose logs -f app
+
+# Stop all services
+docker-compose down
+
+# Interactive helper script
+./docker-quick-start.sh
+```
+
+### Key Benefits:
+✅ No npm install needed - everything runs in containers  
+✅ MongoDB pre-configured and initialized  
+✅ Automatic health checks  
+✅ Production-ready configuration  
+✅ Easy scaling and deployment  
+
+### Additional Resources:
+- [DOCKER_GUIDE.md](./DOCKER_GUIDE.md) - Complete Docker documentation
+- [DOCKER_CHECKLIST.md](./DOCKER_CHECKLIST.md) - Setup verification checklist
+- [docker-quick-start.sh](./docker-quick-start.sh) - Interactive setup helper
+
+For detailed Docker information, see [DOCKER_GUIDE.md](./DOCKER_GUIDE.md)
+
+---
+
 ## 📝 License
 
 Dự án học tập - Trường Đại học Sư phạm Hà Nội
@@ -453,6 +549,7 @@ Sau hoàn thành dự án này, bạn sẽ hiểu:
 ✅ Hệ thống phân tán (Replication & Sharding)  
 ✅ RESTful API design  
 ✅ JWT authentication & RBAC  
+✅ Docker containerization & orchestration  
 ✅ MongoDB aggregation pipelines  
 ✅ Performance optimization  
 ✅ Error handling & validation  
