@@ -54,7 +54,7 @@ docker ps | grep mongodb
 
 ```bash
 # Vào thư mục project
-cd /path/to/khoa-luan-su-pham
+cd /path/to/khoa-luan-tot-nghiep
 
 # Kiểm tra file package.json
 ls -la package.json
@@ -412,7 +412,7 @@ sudo apt-get install -y nodejs
 
 # Clone project
 git clone your-repo
-cd khoa-luan-su-pham
+cd khoa-luan-tot-nghiep
 
 # Cài dependencies
 npm install

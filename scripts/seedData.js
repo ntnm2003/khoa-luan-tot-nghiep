@@ -38,7 +38,7 @@ const generateUsers = () => {
     const dept = departments[(i - 1) % 4];
     const campus = campuses[(i - 1) % 3];
     users.push({
-      username: `teacher${i:02d}`,
+      username: `teacher${i}`,
       email: `teacher${i}@hnue.edu.vn`,
       password: 'Teacher@123456',
       fullName: `Giảng viên ${i}`,
@@ -179,20 +179,34 @@ const seedDatabase = async () => {
     console.log('🌱 Bắt đầu tạo dữ liệu mẫu...\n');
 
     // Connect to database
-    await connectDB();
+    const conn = await connectDB();
+
+    // Wait a bit for connection to be fully established
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     // Clear existing data
     console.log('🧹 Xóa dữ liệu cũ...');
-    await Promise.all([
-      User.deleteMany({}),
-      Course.deleteMany({}),
-      Material.deleteMany({}),
-      Activity.deleteMany({})
-    ]);
+    try {
+      await Promise.all([
+        User.deleteMany({}),
+        Course.deleteMany({}),
+        Material.deleteMany({}),
+        Activity.deleteMany({})
+      ]);
+    } catch (delError) {
+      console.log('   (Dữ liệu rỗng hoặc lỗi nhỏ, tiếp tục...)');
+    }
 
     // Generate and save users
     console.log('👥 Tạo dữ liệu người dùng...');
     const usersData = generateUsers();
+
+    // Hash passwords before saving
+    for (let user of usersData) {
+      const salt = await bcryptjs.genSalt(10);
+      user.password = await bcryptjs.hash(user.password, salt);
+    }
+
     const savedUsers = await User.insertMany(usersData);
     const userIds = savedUsers.map(u => u._id);
     console.log(`   ✓ Tạo ${savedUsers.length} người dùng`);
@@ -239,7 +253,7 @@ const seedDatabase = async () => {
 
     process.exit(0);
   } catch (error) {
-    console.error('❌ Lỗi tạo dữ liệu:', error.message);
+    console.error('Lỗi tạo dữ liệu:', error.message);
     process.exit(1);
   }
 };
