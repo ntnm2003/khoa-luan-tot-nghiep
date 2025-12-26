@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartLearn - Learning Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 50px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .card h1 {
+            color: #333;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+        }
+
+        .nav-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .nav-btn {
+            padding: 15px 25px;
+            font-size: 1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            font-weight: bold;
+            color: white;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-dashboard {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            grid-column: 1 / -1;
+        }
+
+        .btn-materials {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .btn-courses {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .btn-api {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            grid-column: 1 / -1;
+        }
+
+        .icon {
+            font-size: 1.8em;
+        }
+
+        .features {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .features h3 {
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            padding: 8px 0;
+            color: #666;
+            border-bottom: 1px solid #eee;
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-list li:before {
+            content: "✓ ";
+            color: #27ae60;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .card {
+                padding: 30px;
+            }
+
+            .card h1 {
+                font-size: 1.5em;
+            }
+
+            .nav-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-dashboard,
+            .btn-api {
+                grid-column: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="logo">📚</div>
+            <h1>SmartLearn</h1>
+            <p>Hệ thống quản lý học liệu phân tán</p>
+
+            <div class="nav-buttons">
+                <a href="dashboard.html" class="nav-btn btn-dashboard">
+                    <span class="icon">📊</span>
+                    <span>Bảng điều khiển</span>
+                </a>
+                <a href="materials.html" class="nav-btn btn-materials">
+                    <span class="icon">📄</span>
+                    <span>Tài liệu</span>
+                </a>
+                <a href="courses.html" class="nav-btn btn-courses">
+                    <span class="icon">📚</span>
+                    <span>Khóa học</span>
+                </a>
+                <a href="http://localhost:3000/api/docs" class="nav-btn btn-api" target="_blank">
+                    <span class="icon">🔌</span>
+                    <span>API Documentation</span>
+                </a>
+            </div>
+
+            <div class="features">
+                <h3>🎯 Tính năng chính</h3>
+                <ul class="feature-list">
+                    <li>Quản lý tài liệu học tập</li>
+                    <li>Quản lý khóa học</li>
+                    <li>Thống kê hoạt động</li>
+                    <li>Phân quyền người dùng</li>
+                    <li>Xác thực JWT</li>
+                    <li>Hệ thống phân tán (MongoDB Replication)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

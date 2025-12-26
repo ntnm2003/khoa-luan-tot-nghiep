@@ -29,7 +29,8 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
-// Swagger Documentation
+app.use(express.static('public'));
+
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
   swaggerOptions: {
     persistAuthorization: true,
@@ -51,20 +52,9 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Root endpoint
+// Root endpoint - serve index.html
 app.get('/', (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: 'SmartLearn API - Learning Management System',
-    version: '1.0.0',
-    documentation: 'http://localhost:3000/api/docs',
-    dashboard: 'http://localhost:3000/dashboard.html'
-  });
-});
-
-// Dashboard endpoint
-app.get('/dashboard', (req, res) => {
-  res.sendFile(__dirname + '/public/dashboard.html');
+  res.sendFile(__dirname + '/public/index.html');
 });
 
 // 404 handler

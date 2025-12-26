@@ -120,7 +120,60 @@ npm run dev
 ```
 
 #### 5. Truy cập
+- **Homepage**: http://localhost:3000
+- **Dashboard**: http://localhost:3000/dashboard.html
+- **Materials Manager**: http://localhost:3000/materials.html
+- **Courses Manager**: http://localhost:3000/courses.html
 - **API Docs**: http://localhost:3000/api/docs
+- **Health Check**: http://localhost:3000/health
+
+---
+
+## 🎨 Web User Interface
+
+SmartLearn includes a complete web UI for managing the system without requiring API calls directly.
+
+### Available Pages:
+
+#### 1. **Home Page** (`/`)
+- Main landing page with navigation
+- Quick links to all features
+- Feature highlights
+
+#### 2. **Dashboard** (`/dashboard.html`)
+- System statistics and analytics
+- Real-time charts (activities, user roles)
+- Top 10 most viewed materials
+- Auto-refresh every 30 seconds
+- JWT authentication included
+
+#### 3. **Materials Manager** (`/materials.html`)
+- **CRUD Operations**: Create, Read, Update, Delete materials
+- **Search & Filter**: By title, category, course, campus
+- **Display Metrics**: View count, download count
+- **Bulk Management**: Handle multiple materials
+
+#### 4. **Courses Manager** (`/courses.html`)
+- **Manage Courses**: Full CRUD functionality
+- **Course Information**: Code, credits, semester, department
+- **Search**: Find courses by name
+- **Statistics**: View enrolled students count
+
+### Features:
+✅ JWT Authentication with email/password  
+✅ User role management (Admin/Teacher/Student)  
+✅ Responsive design (mobile, tablet, desktop)  
+✅ Real-time error messages  
+✅ Auto-saving with local storage  
+✅ Interactive modals for adding/editing  
+✅ Chart.js visualizations  
+
+**👉 For detailed UI instructions, see [UI_GUIDE.md](./UI_GUIDE.md)**
+
+---
+
+#### 5. Truy cập
+- **Homepage**: http://localhost:3000
 - **Dashboard**: http://localhost:3000/dashboard.html
 - **Health Check**: http://localhost:3000/health
 

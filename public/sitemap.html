@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartLearn Site Map & Navigation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+
+        .sitemap {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            margin-bottom: 40px;
+        }
+
+        .level {
+            margin-bottom: 30px;
+        }
+
+        .level-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-left: 20px;
+        }
+
+        .item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s;
+        }
+
+        .item:hover {
+            background: #e8eaf6;
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.2);
+        }
+
+        .item-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 1em;
+        }
+
+        .item-desc {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+
+        .item-url {
+            color: #667eea;
+            font-size: 0.85em;
+            font-family: monospace;
+            word-break: break-all;
+            margin-bottom: 10px;
+        }
+
+        .item-link {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.85em;
+            transition: background 0.3s;
+        }
+
+        .item-link:hover {
+            background: #5568d3;
+        }
+
+        .flow-diagram {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            margin-bottom: 40px;
+        }
+
+        .flow-diagram h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .flow {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .flow-step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-number {
+            background: #667eea;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .step-desc {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .docmap {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .docmap h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .doc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .doc-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-top: 4px solid #667eea;
+            transition: all 0.3s;
+        }
+
+        .doc-card:hover {
+            background: #e8eaf6;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .doc-type {
+            font-size: 0.85em;
+            color: #999;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .doc-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1.05em;
+        }
+
+        .doc-purpose {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .doc-link {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.85em;
+            transition: background 0.3s;
+        }
+
+        .doc-link:hover {
+            background: #5568d3;
+        }
+
+        .features {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            margin-top: 40px;
+        }
+
+        .features h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .feature-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .feature-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .feature-name {
+            font-weight: bold;
+            color: #333;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .sitemap,
+            .flow-diagram,
+            .docmap,
+            .features {
+                padding: 20px;
+            }
+
+            .items-grid,
+            .doc-grid,
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗺️ SmartLearn Site Map</h1>
+        <p class="subtitle">Complete navigation guide for the SmartLearn Learning Management System</p>
+
+        <!-- Main Navigation -->
+        <div class="sitemap">
+            <div class="level">
+                <div class="level-title">🏠 Main Pages</div>
+                <div class="items-grid">
+                    <div class="item">
+                        <div class="item-title">Home</div>
+                        <div class="item-desc">Landing page with navigation hub</div>
+                        <div class="item-url">/</div>
+                        <a href="/" class="item-link">Visit Home</a>
+                    </div>
+                    <div class="item">
+                        <div class="item-title">Dashboard</div>
+                        <div class="item-desc">Statistics & real-time analytics</div>
+                        <div class="item-url">/dashboard.html</div>
+                        <a href="/dashboard.html" class="item-link">View Dashboard</a>
+                    </div>
+                    <div class="item">
+                        <div class="item-title">Materials Manager</div>
+                        <div class="item-desc">CRUD for learning resources</div>
+                        <div class="item-url">/materials.html</div>
+                        <a href="/materials.html" class="item-link">Manage Materials</a>
+                    </div>
+                    <div class="item">
+                        <div class="item-title">Courses Manager</div>
+                        <div class="item-desc">CRUD for courses</div>
+                        <div class="item-url">/courses.html</div>
+                        <a href="/courses.html" class="item-link">Manage Courses</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="level">
+                <div class="level-title">📡 API & Documentation</div>
+                <div class="items-grid">
+                    <div class="item">
+                        <div class="item-title">API Documentation</div>
+                        <div class="item-desc">Interactive Swagger UI</div>
+                        <div class="item-url">/api/docs</div>
+                        <a href="/api/docs" class="item-link" target="_blank">View API Docs</a>
+                    </div>
+                    <div class="item">
+                        <div class="item-title">Health Check</div>
+                        <div class="item-desc">Server status endpoint</div>
+                        <div class="item-url">/health</div>
+                        <a href="/health" class="item-link" target="_blank">Check Status</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Flows -->
+        <div class="flow-diagram">
+            <h2>👥 Typical User Workflows</h2>
+
+            <div class="flow">
+                <h3 style="color: #667eea; margin-bottom: 15px;">👨‍💼 Administrator Workflow</h3>
+                <div class="flow-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <div class="step-title">Go to Home</div>
+                        <div class="step-desc">Access http://localhost:3000</div>
+                    </div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <div class="step-title">Click Dashboard</div>
+                        <div class="step-desc">View system statistics and analytics</div>
+                    </div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <div class="step-title">Login with Admin Account</div>
+                        <div class="step-desc">Email: admin@hnue.edu.vn</div>
+                    </div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <div class="step-title">Manage Resources</div>
+                        <div class="step-desc">Access Materials & Courses managers</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flow">
+                <h3 style="color: #667eea; margin-bottom: 15px;">👨‍🏫 Teacher Workflow</h3>
+                <div class="flow-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <div class="step-title">Login</div>
+                        <div class="step-desc">Use teacher@hnue.edu.vn</div>
+                    </div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <div class="step-title">Create/Edit Courses</div>
+                        <div class="step-desc">Go to Courses Manager</div>
+                    </div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <div class="step-title">Add Learning Materials</div>
+                        <div class="step-desc">Upload lectures, assignments, exams</div>
+                    </div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <div class="step-title">View Analytics</div>
+                        <div class="step-desc">Check Dashboard for activity stats</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flow">
+                <h3 style="color: #667eea; margin-bottom: 15px;">👨‍🎓 Student Workflow</h3>
+                <div class="flow-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <div class="step-title">Login</div>
+                        <div class="step-desc">Use student001@student.hnue.edu.vn</div>
+                    </div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <div class="step-title">View Dashboard</div>
+                        <div class="step-desc">Check learning statistics</div>
+                    </div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <div class="step-title">Browse Materials</div>
+                        <div class="step-desc">Search and filter learning resources</div>
+                    </div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <div class="step-title">Access Courses</div>
+                        <div class="step-desc">View enrolled courses</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documentation Map -->
+        <div class="docmap">
+            <h2>📚 Documentation Map</h2>
+            <div class="doc-grid">
+                <div class="doc-card">
+                    <div class="doc-type">Getting Started</div>
+                    <div class="doc-name">README.md</div>
+                    <div class="doc-purpose">Project overview, features, quick start guide</div>
+                    <a href="./README.md" class="doc-link">Read Now</a>
+                </div>
+                <div class="doc-card">
+                    <div class="doc-type">User Guide</div>
+                    <div class="doc-name">UI_GUIDE.md</div>
+                    <div class="doc-purpose">Complete guide to web interface and all pages</div>
+                    <a href="./UI_GUIDE.md" class="doc-link">Read Now</a>
+                </div>
+                <div class="doc-card">
+                    <div class="doc-type">Setup</div>
+                    <div class="doc-name">SETUP_GUIDE.md</div>
+                    <div class="doc-purpose">Detailed installation and configuration</div>
+                    <a href="./SETUP_GUIDE.md" class="doc-link">Read Now</a>
+                </div>
+                <div class="doc-card">
+                    <div class="doc-type">API Reference</div>
+                    <div class="doc-name">API_DOCUMENTATION.md</div>
+                    <div class="doc-purpose">Complete API endpoint documentation</div>
+                    <a href="./API_DOCUMENTATION.md" class="doc-link">Read Now</a>
+                </div>
+                <div class="doc-card">
+                    <div class="doc-type">Database</div>
+                    <div class="doc-name">MONGODB_SCHEMA.md</div>
+                    <div class="doc-purpose">Database schema, models, and indexes</div>
+                    <a href="./MONGODB_SCHEMA.md" class="doc-link">Read Now</a>
+                </div>
+                <div class="doc-card">
+                    <div class="doc-type">Architecture</div>
+                    <div class="doc-name">ARCHITECTURE.md</div>
+                    <div class="doc-purpose">System design and distributed setup</div>
+                    <a href="./ARCHITECTURE.md" class="doc-link">Read Now</a>
+                </div>
+                <div class="doc-card">
+                    <div class="doc-type">Deployment</div>
+                    <div class="doc-name">Docker Setup</div>
+                    <div class="doc-purpose">Docker Compose configuration and deployment</div>
+                    <a href="./docker-compose.yml" class="doc-link">View Config</a>
+                </div>
+                <div class="doc-card">
+                    <div class="doc-type">Requirements</div>
+                    <div class="doc-name">requirement.md</div>
+                    <div class="doc-purpose">Academic project requirements and rubric</div>
+                    <a href="./requirement.md" class="doc-link">Read Now</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Overview -->
+        <div class="features">
+            <h2>✨ Key Features</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">🔐</div>
+                    <div class="feature-name">Secure Authentication</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">👥</div>
+                    <div class="feature-name">Role-Based Access</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-name">Real-Time Analytics</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🔍</div>
+                    <div class="feature-name">Advanced Search</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📱</div>
+                    <div class="feature-name">Responsive Design</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">⚙️</div>
+                    <div class="feature-name">REST API</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🌐</div>
+                    <div class="feature-name">Distributed System</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📈</div>
+                    <div class="feature-name">CRUD Operations</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
