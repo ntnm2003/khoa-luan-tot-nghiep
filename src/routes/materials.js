@@ -63,6 +63,15 @@ router.get('/', protect, async (req, res, next) => {
   try {
     let query = { isPublished: true };
 
+    // Campus filtering based on user role
+    // Admin can see all, Teacher/Student can only see their campus
+    if (req.user.role !== 'admin') {
+      query.campus = req.user.campus;
+    } else if (req.query.campus) {
+      // Admin can optionally filter by campus if specified
+      query.campus = req.query.campus;
+    }
+
     // Lọc theo khóa học
     if (req.query.course) {
       query.course = req.query.course;
@@ -78,10 +87,6 @@ router.get('/', protect, async (req, res, next) => {
       query.fileType = req.query.fileType;
     }
 
-    // Lọc theo cơ sở
-    if (req.query.campus) {
-      query.campus = req.query.campus;
-    }
 
     // Tìm kiếm văn bản
     if (req.query.search) {

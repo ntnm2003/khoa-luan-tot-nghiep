@@ -275,6 +275,12 @@
             <p>Hệ thống quản lý học liệu phân tán</p>
         </div>
 
+        <div style="text-align: right; margin-bottom: 20px;">
+            <span id="userDisplay" style="color: #667eea; font-weight: bold; margin-right: 20px;"></span>
+            <a href="/" style="color: #667eea; text-decoration: none; font-weight: bold; margin-right: 15px;">🏠 Trang chủ</a>
+            <button onclick="logout()" style="padding: 10px 20px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Đăng xuất</button>
+        </div>
+
         <div class="error-message" id="errorMessage"></div>
         <div class="success-message" id="successMessage"></div>
 
@@ -356,6 +362,16 @@
         // Configure axios
         axios.defaults.baseURL = API_URL;
 
+        // Check role access
+        function checkRoleAccess() {
+            if (!currentUser || currentUser.role !== 'admin') {
+                alert('❌ Dashboard chỉ dành cho Admin. Bạn sẽ được chuyển hướng...');
+                window.location.href = '/login.html';
+                return false;
+            }
+            return true;
+        }
+
         function updateAuthUI() {
             const authForm = document.querySelector('.auth-form');
             const userInfo = document.getElementById('userInfo');
@@ -418,8 +434,7 @@
             localStorage.removeItem('currentUser');
             delete axios.defaults.headers.common['Authorization'];
 
-            updateAuthUI();
-            showSuccess('Đã đăng xuất');
+            window.location.href = '/login.html';
         }
 
         async function loadDashboard() {
@@ -563,6 +578,9 @@
 
         // Initialize on page load
         window.addEventListener('load', () => {
+            // Check role access first
+            if (!checkRoleAccess()) return;
+
             updateAuthUI();
 
             if (token && currentUser) {

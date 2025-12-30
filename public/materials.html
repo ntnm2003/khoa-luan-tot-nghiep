@@ -386,6 +386,7 @@
                 <p id="userInfo" style="color: #667eea; margin-top: 5px;"></p>
             </div>
             <div class="header-buttons">
+                <a href="/" style="color: #667eea; text-decoration: none; font-weight: bold; margin-right: 15px;">🏠 Trang chủ</a>
                 <button class="btn btn-primary" onclick="openAddModal()">+ Thêm tài liệu</button>
                 <button class="btn btn-secondary" onclick="logout()">Đăng xuất</button>
             </div>
@@ -423,6 +424,15 @@
                     <label for="courseFilter">Khóa học:</label>
                     <select id="courseFilter">
                         <option value="">Tất cả</option>
+                    </select>
+                </div>
+                <div class="filter-group" id="campusFilterGroup" style="display: none;">
+                    <label for="campusFilter">Cơ sở:</label>
+                    <select id="campusFilter">
+                        <option value="">Tất cả</option>
+                        <option value="Hà Nội">Hà Nội</option>
+                        <option value="Đà Nẵng">Đà Nẵng</option>
+                        <option value="TP. Hồ Chí Minh">TP. Hồ Chí Minh</option>
                     </select>
                 </div>
                 <button class="btn btn-secondary" onclick="loadMaterials()">🔄 Làm mới</button>
@@ -513,15 +523,39 @@
 
         axios.defaults.baseURL = API_URL;
 
+        // Set authorization header if token exists
+        if (token) {
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        }
+
+        // Check role access
+        function checkRoleAccess() {
+            if (!token) {
+                window.location.href = '/login.html';
+                return false;
+            }
+            // All authenticated users can view materials (students, teachers, admin)
+            return true;
+        }
+
         function updateUI() {
             const authSection = document.getElementById('authSection');
             const mainContent = document.getElementById('mainContent');
             const userInfo = document.getElementById('userInfo');
+            const campusFilterGroup = document.getElementById('campusFilterGroup');
 
             if (token && currentUser) {
                 authSection.style.display = 'none';
                 mainContent.style.display = 'block';
                 userInfo.textContent = `✓ ${currentUser.fullName} (${currentUser.role})`;
+
+                // Show campus filter only for admin
+                if (currentUser.role === 'admin') {
+                    campusFilterGroup.style.display = 'flex';
+                } else {
+                    campusFilterGroup.style.display = 'none';
+                }
+
                 loadCourses();
                 loadMaterials();
             } else {
@@ -562,8 +596,7 @@
             localStorage.removeItem('currentUser');
             delete axios.defaults.headers.common['Authorization'];
 
-            updateUI();
-            showMessage('Đã đăng xuất', 'success');
+            window.location.href = '/login.html';
         }
 
         async function loadCourses() {
@@ -603,11 +636,13 @@
                 const search = document.getElementById('searchInput').value;
                 const category = document.getElementById('categoryFilter').value;
                 const course = document.getElementById('courseFilter').value;
+                const campus = currentUser.role === 'admin' ? document.getElementById('campusFilter').value : '';
 
                 let url = '/api/materials?limit=50';
                 if (search) url += `&search=${encodeURIComponent(search)}`;
                 if (category) url += `&category=${category}`;
                 if (course) url += `&course=${course}`;
+                if (campus) url += `&campus=${encodeURIComponent(campus)}`;
 
                 const response = await axios.get(url, {
                     headers: { Authorization: `Bearer ${token}` }
@@ -759,9 +794,26 @@
         // Event listeners
         document.getElementById('searchInput').addEventListener('keyup', loadMaterials);
         document.getElementById('categoryFilter').addEventListener('change', loadMaterials);
+        document.getElementById('campusFilter').addEventListener('change', loadMaterials);
 
         // Initialize
-        window.addEventListener('load', updateUI);
+        window.addEventListener('load', () => {
+            // Reload currentUser from storage in case it changed
+            token = localStorage.getItem('token');
+            currentUser = localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')) : null;
+
+            // Set auth header again
+            if (token) {
+                axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            }
+
+            console.log('Materials page load - Token:', !!token, 'User:', currentUser);
+
+            // Check role access first
+            if (!checkRoleAccess()) return;
+
+            updateUI();
+        });
     </script>
 </body>
 </html>

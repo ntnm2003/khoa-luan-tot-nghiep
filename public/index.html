@@ -159,11 +159,20 @@
 <body>
     <div class="container">
         <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div></div>
+                <div>
+                    <span id="userInfo" style="color: #667eea; font-weight: bold; margin-right: 15px; display: none;"></span>
+                    <button id="logoutBtn" onclick="logout()" style="padding: 10px 20px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; display: none;">Đăng xuất</button>
+                    <a href="login.html" id="loginLink" style="padding: 10px 20px; background: #667eea; color: white; border-radius: 5px; text-decoration: none; font-weight: bold;">Đăng nhập</a>
+                </div>
+            </div>
+
             <div class="logo">📚</div>
             <h1>SmartLearn</h1>
             <p>Hệ thống quản lý học liệu phân tán</p>
 
-            <div class="nav-buttons">
+            <div class="nav-buttons" id="navButtons" style="display: none;">
                 <a href="dashboard.html" class="nav-btn btn-dashboard">
                     <span class="icon">📊</span>
                     <span>Bảng điều khiển</span>
@@ -182,6 +191,10 @@
                 </a>
             </div>
 
+            <div id="guestMessage" style="background: #e8eaf6; color: #667eea; padding: 20px; border-radius: 10px; margin: 20px 0; font-weight: bold;">
+                👤 Vui lòng đăng nhập để truy cập các tính năng
+            </div>
+
             <div class="features">
                 <h3>🎯 Tính năng chính</h3>
                 <ul class="feature-list">
@@ -195,6 +208,57 @@
             </div>
         </div>
     </div>
-</body>
-</html>
+
+    <script>
+        // Check authentication status
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            const user = localStorage.getItem('currentUser');
+
+            const userInfo = document.getElementById('userInfo');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const loginLink = document.getElementById('loginLink');
+            const navButtons = document.getElementById('navButtons');
+            const guestMessage = document.getElementById('guestMessage');
+
+            if (token && user) {
+                try {
+                    const userData = JSON.parse(user);
+
+                    // Show authenticated UI
+                    userInfo.textContent = `✓ ${userData.fullName} (${userData.role})`;
+                    userInfo.style.display = 'inline-block';
+                    logoutBtn.style.display = 'inline-block';
+                    loginLink.style.display = 'none';
+                    navButtons.style.display = 'grid';
+                    guestMessage.style.display = 'none';
+                } catch (e) {
+                    // Invalid session
+                    clearAuth();
+                }
+            } else {
+                // Show guest UI
+                userInfo.style.display = 'none';
+                logoutBtn.style.display = 'none';
+                loginLink.style.display = 'inline-block';
+                navButtons.style.display = 'none';
+                guestMessage.style.display = 'block';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('currentUser');
+            checkAuth();
+            alert('Đã đăng xuất thành công');
+        }
+
+        function clearAuth() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('currentUser');
+        }
+
+        // Check auth on page load
+        window.addEventListener('load', checkAuth);
+    </script>
 

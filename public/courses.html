@@ -389,6 +389,7 @@
                 <p id="userInfo" style="color: #667eea; margin-top: 5px;"></p>
             </div>
             <div class="header-buttons">
+                <a href="/" style="color: #667eea; text-decoration: none; font-weight: bold; margin-right: 15px;">🏠 Trang chủ</a>
                 <button class="btn btn-primary" onclick="openAddModal()">+ Thêm khóa học</button>
                 <button class="btn btn-secondary" onclick="logout()">Đăng xuất</button>
             </div>
@@ -410,6 +411,15 @@
                 <div class="filter-group">
                     <label for="searchInput">Tìm kiếm:</label>
                     <input type="text" id="searchInput" placeholder="Nhập tên khóa học...">
+                </div>
+                <div class="filter-group" id="campusFilterGroup" style="display: none;">
+                    <label for="campusFilter">Cơ sở:</label>
+                    <select id="campusFilter">
+                        <option value="">Tất cả</option>
+                        <option value="Hà Nội">Hà Nội</option>
+                        <option value="Đà Nẵng">Đà Nẵng</option>
+                        <option value="TP. Hồ Chí Minh">TP. Hồ Chí Minh</option>
+                    </select>
                 </div>
                 <button class="btn btn-secondary" onclick="loadCourses()">🔄 Làm mới</button>
             </div>
@@ -480,15 +490,39 @@
 
         axios.defaults.baseURL = API_URL;
 
+        // Set authorization header if token exists
+        if (token) {
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        }
+
+        // Check role access
+        function checkRoleAccess() {
+            if (!currentUser || (currentUser.role !== 'teacher' && currentUser.role !== 'admin')) {
+                alert('❌ Courses chỉ dành cho Teacher và Admin. Bạn sẽ được chuyển hướng...');
+                window.location.href = '/login.html';
+                return false;
+            }
+            return true;
+        }
+
         function updateUI() {
             const authSection = document.getElementById('authSection');
             const mainContent = document.getElementById('mainContent');
             const userInfo = document.getElementById('userInfo');
+            const campusFilterGroup = document.getElementById('campusFilterGroup');
 
             if (token && currentUser) {
                 authSection.style.display = 'none';
                 mainContent.style.display = 'block';
                 userInfo.textContent = `✓ ${currentUser.fullName} (${currentUser.role})`;
+
+                // Show campus filter only for admin
+                if (currentUser.role === 'admin') {
+                    campusFilterGroup.style.display = 'flex';
+                } else {
+                    campusFilterGroup.style.display = 'none';
+                }
+
                 loadCourses();
             } else {
                 authSection.style.display = 'block';
@@ -528,8 +562,7 @@
             localStorage.removeItem('currentUser');
             delete axios.defaults.headers.common['Authorization'];
 
-            updateUI();
-            showMessage('Đã đăng xuất', 'success');
+            window.location.href = '/login.html';
         }
 
         // Normalize course data from API response
@@ -553,8 +586,11 @@
 
             try {
                 const search = document.getElementById('searchInput').value;
+                const campus = currentUser.role === 'admin' ? document.getElementById('campusFilter').value : '';
+
                 let url = '/api/courses';
                 if (search) url += `?search=${encodeURIComponent(search)}`;
+                if (campus) url += (search ? '&' : '?') + `campus=${encodeURIComponent(campus)}`;
 
                 const response = await axios.get(url, {
                     headers: { Authorization: `Bearer ${token}` }
@@ -688,9 +724,26 @@
 
         // Event listeners
         document.getElementById('searchInput').addEventListener('keyup', loadCourses);
+        document.getElementById('campusFilter').addEventListener('change', loadCourses);
 
         // Initialize
-        window.addEventListener('load', updateUI);
+        window.addEventListener('load', () => {
+            // Reload currentUser from storage in case it changed
+            token = localStorage.getItem('token');
+            currentUser = localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')) : null;
+
+            // Set auth header again
+            if (token) {
+                axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            }
+
+            console.log('Courses page load - Token:', !!token, 'User:', currentUser);
+
+            // Check role access first
+            if (!checkRoleAccess()) return;
+
+            updateUI();
+        });
     </script>
 </body>
 </html>

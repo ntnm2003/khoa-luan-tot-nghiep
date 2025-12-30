@@ -46,8 +46,16 @@ router.get('/', protect, async (req, res, next) => {
   try {
     let query = {};
 
+    // Campus filtering based on user role
+    // Admin can see all, Teacher/Student can only see their campus
+    if (req.user.role !== 'admin') {
+      query.campusOfferingLocation = req.user.campus;
+    } else if (req.query.campus) {
+      // Admin can optionally filter by campus if specified
+      query.campusOfferingLocation = req.query.campus;
+    }
+
     if (req.query.department) query.department = req.query.department;
-    if (req.query.campus) query.campusOfferingLocation = req.query.campus;
     if (req.query.status) query.status = req.query.status;
 
     // Students only see active courses
