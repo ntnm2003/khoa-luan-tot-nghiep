@@ -615,12 +615,12 @@
                 courses.forEach(course => {
                     const option1 = document.createElement('option');
                     option1.value = course._id;
-                    option1.textContent = course.name;
+                    option1.textContent = course.courseName || course.name || 'N/A';
                     courseFilter.appendChild(option1);
 
                     const option2 = document.createElement('option');
                     option2.value = course._id;
-                    option2.textContent = course.name;
+                    option2.textContent = course.courseName || course.name || 'N/A';
                     materialCourse.appendChild(option2);
                 });
             } catch (error) {
@@ -794,6 +794,7 @@
         // Event listeners
         document.getElementById('searchInput').addEventListener('keyup', loadMaterials);
         document.getElementById('categoryFilter').addEventListener('change', loadMaterials);
+        document.getElementById('courseFilter').addEventListener('change', loadMaterials);
         document.getElementById('campusFilter').addEventListener('change', loadMaterials);
 
         // Initialize

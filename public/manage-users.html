@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Người dùng - SmartLearn</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #333;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            background: #667eea;
+            color: white;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #5568d3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th, table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        table th {
+            background: #f4f4f9;
+        }
+
+        table tr:hover {
+            background: #f1f1f1;
+        }
+
+        #add-user-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        #add-user-btn:hover {
+            background: #219150;
+        }
+
+        .admin-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .admin-section h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            width: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Quản lý Người dùng</h1>
+            <a href="/dashboard.html" class="btn">Quay lại Dashboard</a>
+        </div>
+
+        <div class="admin-section">
+            <h2>Quản lý người dùng</h2>
+            <table id="users-table">
+                <thead>
+                    <tr>
+                        <th>Tên đăng nhập</th>
+                        <th>Email</th>
+                        <th>Vai trò</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- User rows will be dynamically added here -->
+                </tbody>
+            </table>
+            <button id="add-user-btn">Thêm người dùng</button>
+        </div>
+
+        <div id="user-modal" class="modal">
+            <div class="modal-content">
+                <h2 id="modal-title">Thêm người dùng</h2>
+                <form id="user-form">
+                    <label for="username">Tên đăng nhập:</label>
+                    <input type="text" id="username" name="username" required>
+
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+
+                    <label for="role">Vai trò:</label>
+                    <select id="role" name="role" required>
+                        <option value="admin">Admin</option>
+                        <option value="teacher">Giáo viên</option>
+                        <option value="student">Học sinh</option>
+                    </select>
+
+                    <button type="submit">Lưu</button>
+                    <button type="button" onclick="closeModal()">Hủy</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function fetchUsers() {
+            try {
+                const token = localStorage.getItem('token'); // Assuming the token is stored in localStorage
+                const response = await axios.get('/api/users', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                const users = response.data;
+                const tableBody = document.querySelector('#users-table tbody');
+                tableBody.innerHTML = '';
+                users.forEach(user => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${user.username}</td>
+                        <td>${user.email}</td>
+                        <td>${user.role}</td>
+                        <td>
+                            <button onclick="editUser('${user._id}')">Sửa</button>
+                            <button onclick="deleteUser('${user._id}')">Xóa</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching users:', error);
+            }
+        }
+
+        async function deleteUser(userId) {
+            try {
+                await axios.delete(`/api/users/${userId}`);
+                fetchUsers();
+            } catch (error) {
+                console.error('Error deleting user:', error);
+            }
+        }
+
+        let editingUserId = null;
+
+        function openModal(user = null) {
+            const modal = document.getElementById('user-modal');
+            const form = document.getElementById('user-form');
+            const title = document.getElementById('modal-title');
+
+            if (user) {
+                editingUserId = user._id;
+                form.username.value = user.username;
+                form.email.value = user.email;
+                form.role.value = user.role;
+                title.textContent = 'Chỉnh sửa người dùng';
+            } else {
+                editingUserId = null;
+                form.reset();
+                title.textContent = 'Thêm người dùng';
+            }
+
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('user-modal');
+            modal.style.display = 'none';
+        }
+
+        document.getElementById('user-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const data = {
+                username: e.target.username.value,
+                email: e.target.email.value,
+                role: e.target.role.value,
+            };
+
+            try {
+                if (editingUserId) {
+                    await axios.put(`/api/users/${editingUserId}`, data);
+                } else {
+                    await axios.post('/api/users', data);
+                }
+
+                closeModal();
+                fetchUsers();
+            } catch (error) {
+                console.error('Error saving user:', error);
+            }
+        });
+
+        async function editUser(userId) {
+            try {
+                const response = await axios.get(`/api/users/${userId}`);
+                openModal(response.data);
+            } catch (error) {
+                console.error('Error fetching user:', error);
+            }
+        }
+
+        document.getElementById('add-user-btn').addEventListener('click', () => openModal());
+
+        fetchUsers();
+    </script>
+</body>
+</html>

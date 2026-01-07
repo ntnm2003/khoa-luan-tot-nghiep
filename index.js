@@ -14,6 +14,7 @@ const authRoutes = require('./src/routes/auth');
 const materialsRoutes = require('./src/routes/materials');
 const coursesRoutes = require('./src/routes/courses');
 const statisticsRoutes = require('./src/routes/statistics');
+const usersRouter = require('./src/routes/users');
 
 // Import middleware
 const errorHandler = require('./src/middleware/errorHandler');
@@ -42,6 +43,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/materials', materialsRoutes);
 app.use('/api/courses', coursesRoutes);
 app.use('/api/statistics', statisticsRoutes);
+app.use('/api/users', usersRouter);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -83,4 +85,3 @@ process.on('SIGTERM', () => {
     console.log('HTTP server closed');
   });
 });
-
