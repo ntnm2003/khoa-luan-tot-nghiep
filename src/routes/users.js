@@ -14,6 +14,19 @@ router.get('/', protect, authorize('admin'), async (req, res) => {
   }
 });
 
+// Get a single user by ID
+router.get('/:id', protect, authorize('admin'), async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching user', error });
+  }
+});
+
 // Create a new user
 router.post('/', protect, authorize('admin'), async (req, res) => {
   try {

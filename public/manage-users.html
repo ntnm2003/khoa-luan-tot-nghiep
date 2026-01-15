@@ -120,6 +120,107 @@
             border-radius: 5px;
             width: 400px;
         }
+
+        .modal-content form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .modal-content label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .modal-content input,
+        .modal-content select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .modal-content button {
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .modal-content button[type="submit"] {
+            background: #27ae60;
+            color: white;
+        }
+
+        .modal-content button[type="submit"]:hover {
+            background: #219150;
+        }
+
+        .modal-content button[type="button"] {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .modal-content button[type="button"]:hover {
+            background: #7f8c8d;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .action-buttons button {
+            padding: 5px 10px;
+            margin: 0;
+            font-size: 12px;
+        }
+
+        .edit-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .edit-btn:hover {
+            background: #2980b9;
+        }
+
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background: #c0392b;
+        }
+
+        .error {
+            color: #e74c3c;
+            padding: 10px;
+            background: #fadbd8;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        .success {
+            color: #27ae60;
+            padding: 10px;
+            background: #d5f4e6;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -128,6 +229,8 @@
             <h1>Quản lý Người dùng</h1>
             <a href="/dashboard.html" class="btn">Quay lại Dashboard</a>
         </div>
+
+        <div id="message-container"></div>
 
         <div class="admin-section">
             <h2>Quản lý người dùng</h2>
@@ -172,6 +275,32 @@
     </div>
 
     <script>
+        function showError(message) {
+            const container = document.getElementById('message-container');
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            container.innerHTML = '';
+            container.appendChild(errorDiv);
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            const container = document.getElementById('message-container');
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success';
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            container.innerHTML = '';
+            container.appendChild(successDiv);
+            setTimeout(() => {
+                successDiv.remove();
+            }, 5000);
+        }
+
         async function fetchUsers() {
             try {
                 const token = localStorage.getItem('token'); // Assuming the token is stored in localStorage
@@ -202,11 +331,21 @@
         }
 
         async function deleteUser(userId) {
+            if (!confirm('Bạn có chắc chắn muốn xóa người dùng này?')) {
+                return;
+            }
             try {
-                await axios.delete(`/api/users/${userId}`);
+                const token = localStorage.getItem('token');
+                await axios.delete(`/api/users/${userId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                showSuccess('Người dùng đã được xóa thành công');
                 fetchUsers();
             } catch (error) {
                 console.error('Error deleting user:', error);
+                showError('Lỗi khi xóa người dùng: ' + (error.response?.data?.message || error.message));
             }
         }
 
@@ -247,25 +386,43 @@
             };
 
             try {
+                const token = localStorage.getItem('token');
                 if (editingUserId) {
-                    await axios.put(`/api/users/${editingUserId}`, data);
+                    await axios.put(`/api/users/${editingUserId}`, data, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+                    showSuccess('Người dùng đã được cập nhật thành công');
                 } else {
-                    await axios.post('/api/users', data);
+                    await axios.post('/api/users', data, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+                    showSuccess('Người dùng đã được tạo thành công');
                 }
 
                 closeModal();
                 fetchUsers();
             } catch (error) {
                 console.error('Error saving user:', error);
+                showError('Lỗi khi lưu người dùng: ' + (error.response?.data?.message || error.message));
             }
         });
 
         async function editUser(userId) {
             try {
-                const response = await axios.get(`/api/users/${userId}`);
+                const token = localStorage.getItem('token');
+                const response = await axios.get(`/api/users/${userId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
                 openModal(response.data);
             } catch (error) {
                 console.error('Error fetching user:', error);
+                showError('Lỗi khi lấy thông tin người dùng: ' + (error.response?.data?.message || error.message));
             }
         }
 
